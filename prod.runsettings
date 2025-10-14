@@ -1,0 +1,15 @@
+<RunSettings>
+  <TestRunParameters>
+    <Parameter name="SearchWord" value="prod" />
+    <Parameter name="BaseUrl" value="" />
+    <Parameter name="Browser" value="firefox" />
+    <Parameter name="Headless" value="false" />
+    <Parameter name="BrowserWidth" value="1280" />
+    <Parameter name="BrowserHeight" value="720" />
+
+    <!-- Timeout settings -->
+    <Parameter name="Timeout" value="30000" />
+    <Parameter name="NavigationTimeout" value="30000" />
+    <Parameter name="ActionTimeout" value="15000" />
+  </TestRunParameters>
+</RunSettings>
