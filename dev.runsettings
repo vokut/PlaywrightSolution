@@ -12,4 +12,7 @@
     <Parameter name="NavigationTimeout" value="30000" />
     <Parameter name="ActionTimeout" value="15000" />
   </TestRunParameters>
+  <Allure>
+    <Directory>allure-results</Directory>
+  </Allure>
 </RunSettings>

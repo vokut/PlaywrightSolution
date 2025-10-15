@@ -33,8 +33,8 @@ namespace Playwright.Core.Drivers
 
             var page = await context.NewPageAsync();
 
-            
-            page.SetDefaultTimeout(cfg.Timeout);                  
+
+            page.SetDefaultTimeout(cfg.Timeout);
             page.SetDefaultNavigationTimeout(cfg.NavigationTimeout);
 
             //wait-for selectors, assertions, etc., globally:

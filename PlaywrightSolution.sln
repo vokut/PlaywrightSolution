@@ -9,8 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playwright.Tests", "Playwri
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D464945-8E0C-4101-A2A3-60E2133E70C3}"
 	ProjectSection(SolutionItems) = preProject
+		.env = .env
 		dev.runsettings = dev.runsettings
 		prod.runsettings = prod.runsettings
+		Readme.txt = Readme.txt
 	EndProjectSection
 EndProject
 Global
