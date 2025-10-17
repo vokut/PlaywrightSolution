@@ -59,7 +59,7 @@ jobs:
           name: allure-report
           path: AllureReport
 
-  deploy:
+    deploy:
     needs: test
     runs-on: ubuntu-latest
     if: always()
@@ -74,8 +74,23 @@ jobs:
           name: allure-report
           path: AllureReport
 
-      - name: Deploy to GitHub Pages
+      - name: Prepare report folder
+        run: |
+          timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+          mkdir -p site/reports/$timestamp
+          cp -r AllureReport/* site/reports/$timestamp/
+          # Also copy to /latest for easy access
+          rm -rf site/latest
+          cp -r AllureReport site/latest
+          echo "REPORT_URL=https://vokut.github.io/PlaywrightSolution/reports/$timestamp/" >> $GITHUB_ENV
+
+      - name: Deploy all reports to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./AllureReport
+          publish_dir: ./site
+
+      - name: Add report link to summary
+        if: always()
+        run: |
+          echo "### ✅ [View Live Allure Report](https://vokut.github.io/PlaywrightSolution/)" >> $GITHUB_STEP_SUMMARY
