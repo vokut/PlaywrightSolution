@@ -27,15 +27,15 @@ jobs:
       - name: Install Playwright browsers
         working-directory: Playwright.Tests
         run: |
-          dotnet build
-          pwsh -Command "npx playwright install --with-deps"
+          dotnet build --configuration Release
+          pwsh bin/Release/net9.0/playwright.ps1 install --with-deps
 
       - name: Run Playwright tests
         env:
           ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
           ORANGEHRM_USER: ${{ secrets.ORANGEHRM_USER }}
           ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
-        run: dotnet test Playwright.Tests/Playwright.Tests.csproj --configuration Release --no-build
+        run: dotnet test Playwright.Tests/Playwright.Tests.csproj --configuration Release --no-build --settings prod.runsettings
 
       - name: Install Allure commandline
         run: |
