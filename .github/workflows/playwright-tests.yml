@@ -77,11 +77,10 @@ jobs:
           path: Playwright.Tests/bin/Release/net9.0/allure-report
           if-no-files-found: warn  # allow missing reports but still continue
 
-deploy:
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     if: always()
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -106,8 +105,8 @@ deploy:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./AllureReport
-          force_orphan: true  # ensures full overwrite
-          keep_files: false   # no old report remains
+          force_orphan: true
+          keep_files: false
 
       - name: Add report link to summary
         if: always()
