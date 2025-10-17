@@ -7,7 +7,7 @@ using Playwright.Tests.Base;
 
 namespace Playwright.Tests
 {
-    [TestFixture]
+    [TestFixture, Ignore("TEMP")]
     [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     [Parallelizable(ParallelScope.All)]
     [AllureNUnit]

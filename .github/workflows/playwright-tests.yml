@@ -1,0 +1,52 @@
+name: Playwright Tests with Allure Report
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Install Playwright browsers
+        run: pwsh Playwright.Tests/bin/Debug/net9.0/playwright.ps1 install --with-deps
+
+      - name: Run Playwright tests
+        env:
+          ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
+          ORANGEHRM_USER: ${{ secrets.ORANGEHRM_USER }}
+          ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
+        run: dotnet test Playwright.Tests/Playwright.Tests.csproj --configuration Release --no-build
+
+      - name: Install Allure commandline
+        run: |
+          dotnet tool install --global Allure.Commons
+          export PATH="$PATH:/home/runner/.dotnet/tools"
+
+      - name: Generate Allure HTML report
+        run: |
+          allure generate --clean \
+            -o AllureReport \
+            Playwright.Tests/bin/Debug/net9.0/allure-results
+
+      - name: Upload Allure Report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: AllureReport
