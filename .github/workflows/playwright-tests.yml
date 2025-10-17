@@ -118,14 +118,7 @@ jobs:
             echo "✅ Allure report found and ready for deployment."
           fi
 
-      - name: Disable caching in HTML files
-        run: |
-          echo "🧹 Adding cache-control headers..."
-          find ./AllureReport -name "*.html" -exec sed -i '1i<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">' {} \;
-          find ./AllureReport -name "*.html" -exec sed -i '2i<meta http-equiv="Pragma" content="no-cache">' {} \;
-          find ./AllureReport -name "*.html" -exec sed -i '3i<meta http-equiv="Expires" content="0">' {} \;
-          
-      - name: Deploy to GitHub Pages (force overwrite)
+       - name: Deploy to GitHub Pages (force overwrite)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
