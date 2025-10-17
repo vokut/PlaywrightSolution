@@ -77,7 +77,7 @@ jobs:
           path: Playwright.Tests/bin/Release/net9.0/allure-report
           if-no-files-found: warn  # allow missing reports but still continue
 
-   deploy:
+deploy:
     needs: test
     runs-on: ubuntu-latest
     if: always()
