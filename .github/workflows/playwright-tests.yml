@@ -39,8 +39,10 @@ jobs:
 
       - name: Install Allure commandline
         run: |
-          sudo apt-get update
-          sudo apt-get install -y allure
+          wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.29.0.tgz -O allure.tgz
+          tar -zxvf allure.tgz
+          sudo mv allure-2.29.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
       - name: Generate Allure HTML report
         run: |
