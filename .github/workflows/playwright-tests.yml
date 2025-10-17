@@ -78,7 +78,7 @@ jobs:
           if-no-files-found: warn  # allow missing reports but still continue
 
   deploy:
-     needs: test
+    needs: test
     runs-on: ubuntu-latest
     if: always()
 
