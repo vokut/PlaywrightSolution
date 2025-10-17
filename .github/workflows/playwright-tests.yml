@@ -81,32 +81,38 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: always()
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          path: repo  # keep repo in a subfolder to avoid overwriting
 
       - name: Download Allure artifact
         uses: actions/download-artifact@v4
         with:
           name: allure-report
-          path: AllureReport
+          path: ./AllureReport
 
-      - name: Clean gh-pages branch
+      - name: Verify Allure report contents
         run: |
-          git fetch origin gh-pages || true
-          git checkout gh-pages || git checkout --orphan gh-pages
-          git rm -rf . || true
-          git clean -fdx || true
-          git checkout master -- .github || true
-        continue-on-error: true
+          echo "=== Checking Allure report folder ==="
+          pwd
+          ls -R ./AllureReport || true
+
+          if [ ! -d "./AllureReport" ] || [ -z "$(ls -A ./AllureReport)" ]; then
+            echo "❌ No report files found — skipping deployment."
+            exit 1
+          else
+            echo "✅ Allure report found and ready for deployment."
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./AllureReport
-          force_orphan: true
-          keep_files: false
+          force_orphan: true  # ensures clean history each deploy
 
       - name: Add report link to summary
         if: always()
