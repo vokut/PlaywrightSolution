@@ -18,6 +18,7 @@ namespace Playwright.Tests
         [Test]
         public async Task CreateCandidate()
         {
+            Assert.Fail("TEST");
             var candidate = new Candidate();
 
             await PageManager.LoginPage.PerformLoginAsync();
