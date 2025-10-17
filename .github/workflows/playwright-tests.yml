@@ -48,10 +48,12 @@ jobs:
         run: allure --version
 
       - name: Generate Allure HTML report
+        if: always()
         run: |
+          mkdir -p Playwright.Tests/bin/Release/net9.0/allure-results
           allure generate --clean \
-            -o AllureReport \
-            Playwright.Tests/bin/Release/net9.0/allure-results
+            -o Playwright.Tests/bin/Release/net9.0/allure-report \
+            Playwright.Tests/bin/Release/net9.0/allure-results || echo "No allure results found"
 
       - name: Upload Allure report artifact
         if: always()
@@ -59,6 +61,7 @@ jobs:
         with:
           name: allure-report
           path: Playwright.Tests/bin/Release/net9.0/allure-report
+          if-no-files-found: ignore
 
   deploy:
     needs: test
