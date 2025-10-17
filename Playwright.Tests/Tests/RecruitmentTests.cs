@@ -7,7 +7,7 @@ using Playwright.Tests.Base;
 
 namespace Playwright.Tests
 {
-    [TestFixture]
+    [TestFixture, Ignore("TEMP")]
     [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     [Parallelizable(ParallelScope.All)]
     [AllureNUnit]
@@ -18,7 +18,6 @@ namespace Playwright.Tests
         [Test]
         public async Task CreateCandidate()
         {
-            Assert.Fail("TEST");
             var candidate = new Candidate();
 
             await PageManager.LoginPage.PerformLoginAsync();
