@@ -78,15 +78,24 @@ jobs:
           if-no-files-found: warn  # allow missing reports but still continue
 
   deploy:
-    needs: test
+     needs: test
     runs-on: ubuntu-latest
     if: always()
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (clean)
         uses: actions/checkout@v4
         with:
-          path: repo  # keep repo in a subfolder to avoid overwriting
+          fetch-depth: 0
+          clean: true
+          path: repo
+
+      - name: Remove existing gh-pages branch content
+        run: |
+          git fetch origin gh-pages || true
+          git branch -D gh-pages || true
+          git checkout --orphan gh-pages
+          rm -rf ./*
 
       - name: Download Allure artifact
         uses: actions/download-artifact@v4
@@ -107,14 +116,18 @@ jobs:
             echo "✅ Allure report found and ready for deployment."
           fi
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (force overwrite)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./AllureReport
-          force_orphan: true  # ensures clean history each deploy
+          force_orphan: true
+          enable_jekyll: false
+          keep_files: false
+          user_name: vokut
+          user_email: vokut@users.noreply.github.com
 
       - name: Add report link to summary
         if: always()
         run: |
-          echo "✅ [View Live Allure Report](https://vokut.github.io/PlaywrightSolution/)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ [View Latest Allure Report](https://vokut.github.io/PlaywrightSolution/)" >> $GITHUB_STEP_SUMMARY
