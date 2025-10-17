@@ -59,7 +59,7 @@ jobs:
           name: allure-report
           path: AllureReport
 
-    deploy:
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     if: always()
@@ -89,7 +89,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
-
       - name: Add report link to summary
         if: always()
         run: |
