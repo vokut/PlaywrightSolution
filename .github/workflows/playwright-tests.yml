@@ -79,7 +79,6 @@ jobs:
           timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
           mkdir -p site/reports/$timestamp
           cp -r AllureReport/* site/reports/$timestamp/
-          # Also copy to /latest for easy access
           rm -rf site/latest
           cp -r AllureReport site/latest
           echo "REPORT_URL=https://vokut.github.io/PlaywrightSolution/reports/$timestamp/" >> $GITHUB_ENV
@@ -89,7 +88,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
+
       - name: Add report link to summary
         if: always()
         run: |
-          echo "### ✅ [View Live Allure Report](https://vokut.github.io/PlaywrightSolution/)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ [View This Run’s Allure Report]($REPORT_URL)" >> $GITHUB_STEP_SUMMARY
