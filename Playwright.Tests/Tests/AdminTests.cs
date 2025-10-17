@@ -17,7 +17,7 @@ namespace Playwright.Tests
         [Test]
         public async Task CreateJobTitle()
         {
-            Assert.Fail("TEST");
+            //Assert.Fail("TEST");
 
             var random = new Random();
             var jobTitle = $"Software Engineer{random.Next(10000, 99999)}";
