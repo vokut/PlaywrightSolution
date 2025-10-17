@@ -25,6 +25,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Install Playwright browsers
+        working-directory: Playwright.Tests
         run: dotnet playwright install --with-deps
 
       - name: Run Playwright tests
