@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Install Playwright browsers
-        run: pwsh Playwright.Tests/bin/Debug/net9.0/playwright.ps1 install --with-deps
+        run: dotnet playwright install --with-deps
 
       - name: Run Playwright tests
         env:
