@@ -25,8 +25,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Install Playwright browsers
-        run: dotnet exec Playwright.Tests/bin/Release/net9.0/playwright.dll install --with-deps
-        
+        working-directory: Playwright.Tests
+        run: |
+          dotnet build
+          pwsh -Command "npx playwright install --with-deps"
+
       - name: Run Playwright tests
         env:
           ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
@@ -43,7 +46,7 @@ jobs:
         run: |
           allure generate --clean \
             -o AllureReport \
-            Playwright.Tests/bin/Debug/net9.0/allure-results
+            Playwright.Tests/bin/Release/net9.0/allure-results
 
       - name: Upload Allure Report artifact
         uses: actions/upload-artifact@v4
