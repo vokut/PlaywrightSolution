@@ -1,5 +1,6 @@
 ﻿using Microsoft.Playwright;
 using NUnit.Framework;
+using Playwright.Core.Config;
 
 namespace Playwright.Core.Driver
 {
@@ -23,7 +24,7 @@ namespace Playwright.Core.Driver
             try
             {
                 if (_initialized) return; // double-check inside lock
-
+                ConfigManager.Initialize();
                 _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
                 _initialized = true;
 

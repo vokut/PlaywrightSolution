@@ -10,8 +10,6 @@
         public string ORANGEHRM_URL { get; set; } = "";
         public string ORANGEHRM_ADMIN_USER { get; set; } = "";
         public string ORANGEHRM_ADMIN_PASSWORD { get; set; } = "";
-        public string ArtifactsDir { get; set; } = "Artifacts";
-
     }
     public class PlaywrightSettings
     {
@@ -19,8 +17,6 @@
         public bool Headless { get; set; } = true;
         public bool RecordTrace { get; set; } = true;
         public bool RecordVideo { get; set; } = false;
-        public string VideoDir { get; set; } = "Artifacts/Videos";
-        public string TraceDir { get; set; } = "Artifacts/Traces";
         public ViewportSettings Viewport { get; set; } = new();
         public int DefaultTimeout { get; set; } = 15000;
         public int NavigationTimeout { get; set; } = 30000;

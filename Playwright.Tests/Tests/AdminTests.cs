@@ -7,6 +7,8 @@ using Playwright.Tests.Base;
 namespace Playwright.Tests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.All)]
+    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     [AllureNUnit]
     [AllureFeature("Admin")]
     [AllureSuite("Admin Management")]
@@ -15,6 +17,7 @@ namespace Playwright.Tests
         [Test]
         public async Task CreateJobTitle()
         {
+            Assert.Fail("Test");
             var random = new Random();
             var jobTitle = $"Software Engineer{random.Next(10000, 99999)}";
 
@@ -88,5 +91,6 @@ namespace Playwright.Tests
             await PageManager.AdminPage.ButtonClickAsync("Search");
             await PageManager.AdminPage.AssertPopupMessageAsync(PopupMessages.NoRecordsFound);
         }
+
     }
 }

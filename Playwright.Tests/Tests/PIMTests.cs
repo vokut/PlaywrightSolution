@@ -8,8 +8,8 @@ using Playwright.Tests.Base;
 namespace Playwright.Tests
 {
     [TestFixture]
-    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     [Parallelizable(ParallelScope.All)]
+    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
     [AllureNUnit]
     [AllureFeature("PIM")]
     [AllureSuite("PIM Management")]

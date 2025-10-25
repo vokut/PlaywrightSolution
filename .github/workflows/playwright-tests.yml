@@ -50,6 +50,7 @@ jobs:
           dotnet test Playwright.Tests/Playwright.Tests.csproj \
             --configuration Release \
             --no-build \
+            -- NUnit.NumberOfTestWorkers=6 \
             --settings nunit.runsettings || true  # prevents job failure
 
       - name: Check if allure-results exists

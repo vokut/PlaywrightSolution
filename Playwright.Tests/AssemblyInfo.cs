@@ -1,3 +1,3 @@
-﻿[assembly: FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-[assembly: Parallelizable(ParallelScope.All)]
-[assembly: LevelOfParallelism(6)]
+﻿//[assembly: FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
+//[assembly: Parallelizable(ParallelScope.Fixtures)]
+[assembly: LevelOfParallelism(8)]

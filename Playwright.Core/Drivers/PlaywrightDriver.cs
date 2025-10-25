@@ -14,26 +14,17 @@ namespace Playwright.Core.Driver
         private IBrowser _browser = null!;
         private IBrowserContext _context = null!;
         private IPage _page = null!;
-        private readonly TestSettings _settings;
 
         public IBrowser Browser => _browser;
         public IBrowserContext Context => _context;
         public IPage Page => _page;
-        public string ArtifactsDir => Path.Combine(TestContext.CurrentContext.WorkDirectory, "artifacts");
-
-        public PlaywrightDriver()
-        {
-            // Ensure config is loaded once per test driver
-            ConfigManager.Initialize();
-            _settings = ConfigManager.Settings;
-        }
 
         public async Task InitializeAsync()
         {
             await PlaywrightManager.EnsureInitializedAsync();
             _playwright = PlaywrightManager.Playwright;
 
-            var pw = _settings.Playwright;
+            var pw = ConfigManager.Settings.Playwright;
             var browserName = pw.Browser.ToLower();
 
             _browser = browserName switch
@@ -51,13 +42,6 @@ namespace Playwright.Core.Driver
 
             _context = await _browser.NewContextAsync(options);
 
-            if (pw.RecordTrace)
-            {
-                var traceDir = Path.Combine(ArtifactsDir, "Traces");
-                Directory.CreateDirectory(traceDir);
-                await _context.Tracing.StartAsync(new() { Screenshots = true, Snapshots = true, Sources = true });
-            }
-
             _page = await _context.NewPageAsync();
             _context.SetDefaultTimeout(pw.DefaultTimeout);
             _context.SetDefaultNavigationTimeout(pw.NavigationTimeout);
@@ -69,16 +53,9 @@ namespace Playwright.Core.Driver
         {
             try
             {
-                if (_settings?.Playwright.RecordTrace == true && _context != null)
+                if (ConfigManager.Settings?.Playwright.RecordTrace == true && _context != null)
                 {
-                    var traceDir = Path.Combine(ArtifactsDir, "Traces");
-                    Directory.CreateDirectory(traceDir);
-
-                    var traceFile = Path.Combine(traceDir,
-                        $"{TestContext.CurrentContext.Test.Name}_{DateTime.Now:HHmmss}.zip");
-
-                    await _context.Tracing.StopAsync(new() { Path = traceFile });
-                    TestContext.Progress.WriteLine($"Trace saved: {traceFile}");
+                    //TO DO
                 }
 
                 if (_context != null)
