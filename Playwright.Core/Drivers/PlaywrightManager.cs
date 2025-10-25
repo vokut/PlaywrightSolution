@@ -11,7 +11,7 @@ namespace Playwright.Core.Driver
     public static class PlaywrightManager
     {
         private static readonly SemaphoreSlim _initLock = new(1, 1);
-        private static IPlaywright _playwright;
+        private static IPlaywright _playwright = null!;
         private static bool _initialized;
 
         public static IPlaywright Playwright => _playwright;
