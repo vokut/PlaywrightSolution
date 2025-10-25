@@ -1,5 +1,5 @@
-﻿using NUnit.Allure.Attributes;
-using NUnit.Allure.Core;
+﻿using Allure.NUnit;
+using Allure.NUnit.Attributes;
 using Playwright.Core.Pages;
 using Playwright.Test.Pages;
 using Playwright.Tests.Base;
@@ -7,8 +7,6 @@ using Playwright.Tests.Base;
 namespace Playwright.Tests
 {
     [TestFixture]
-    [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-    [Parallelizable(ParallelScope.All)]
     [AllureNUnit]
     [AllureFeature("Admin")]
     [AllureSuite("Admin Management")]

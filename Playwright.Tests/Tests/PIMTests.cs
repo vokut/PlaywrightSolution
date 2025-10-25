@@ -1,5 +1,5 @@
-﻿using NUnit.Allure.Attributes;
-using NUnit.Allure.Core;
+﻿using Allure.NUnit;
+using Allure.NUnit.Attributes;
 using Playwright.Core.Models;
 using Playwright.Core.Pages;
 using Playwright.Test.Pages;

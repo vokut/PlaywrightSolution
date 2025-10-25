@@ -30,17 +30,6 @@ jobs:
           dotnet build --configuration Release
           pwsh bin/Release/net9.0/playwright.ps1 install --with-deps
 
-      - name: Run Playwright tests
-        env:
-          ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
-          ORANGEHRM_USER: ${{ secrets.ORANGEHRM_USER }}
-          ORANGEHRM_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
-        run: |
-          dotnet test Playwright.Tests/Playwright.Tests.csproj \
-            --configuration Release \
-            --no-build \
-            --settings prod.runsettings || true  # prevents job failure
-
       - name: Install Allure commandline
         run: |
           wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz -O allure.tgz
@@ -50,6 +39,18 @@ jobs:
 
       - name: Verify Allure installation
         run: allure --version
+        
+      - name: Run Playwright tests
+        env:
+          TEST_ENVIRONMENT: prod
+          Framework__ORANGEHRM_URL: ${{ secrets.ORANGEHRM_URL }}
+          Framework__ORANGEHRM_ADMIN_USER: ${{ secrets.ORANGEHRM_USER }}
+          Framework__ORANGEHRM_ADMIN_PASSWORD: ${{ secrets.ORANGEHRM_PASSWORD }}
+        run: |
+          dotnet test Playwright.Tests/Playwright.Tests.csproj \
+            --configuration Release \
+            --no-build \
+            --settings nunit.runsettings || true  # prevents job failure
 
       - name: Check if allure-results exists
         if: always()
@@ -118,7 +119,7 @@ jobs:
             echo "✅ Allure report found and ready for deployment."
           fi
 
-       - name: Deploy to GitHub Pages (force overwrite)
+      - name: Deploy to GitHub Pages (force overwrite)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

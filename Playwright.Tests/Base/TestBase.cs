@@ -1,28 +1,30 @@
-﻿using static Playwright.Core.Drivers.PlaywrightDriver;
+﻿using Microsoft.Playwright;
+using Playwright.Core.Config;
+using Playwright.Core.Driver;
+using Playwright.Core.Models;
+using Playwright.Tests.Base;
 
-namespace Playwright.Tests.Base
+public abstract class TestBase
 {
-    [TestFixture]
-    public abstract class TestBase
+    protected PlaywrightDriver Driver;
+    protected IBrowserContext Context;
+    protected IPage Page;
+    protected PageManager PageManager { get; private set; }
+    protected TestSettings Settings => ConfigManager.Settings;
+
+    [SetUp]
+    public async Task SetupAsync()
     {
-        protected PageManager PageManager { get; private set; }
-        protected BrowserSession Session { get; private set; }
-
-        [SetUp]
-        public async Task BaseSetup()
-        {
-            Session = await InitializePlaywrightAsync();
-            PageManager = new PageManager(Session.Page);
-        }
-
-        [TearDown]
-        public async Task BaseTeardown()
-        {
-            if (Session != null)
-            {
-                await Session.CloseAsync();
-            }
-            await Task.Delay(100); // let browser exit gracefully
-        }
+        Driver = new PlaywrightDriver();
+        await Driver.InitializeAsync(); // this handles all setup internally
+        PageManager = new PageManager(Driver.Page);
+        Context = Driver.Context;
+        Page = Driver.Page;
     }
+
+    [TearDown]
+    public async Task TearDownAsync() => await Driver.DisposeAsync();
+
+    //[OneTimeTearDown]
+    //public static async Task GlobalTeardownAsync() => await PlaywrightManager.DisposeAsync();
 }

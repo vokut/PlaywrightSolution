@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using Playwright.Core.Config;
 using Playwright.Test.Pages;
 
 namespace Playwright.Core.Pages
@@ -17,12 +18,7 @@ namespace Playwright.Core.Pages
 
         public async Task GoToLoginPageAsync()
         {
-            // You can replace this with your ConfigManager if you store URLs in JSON files
-            var orangeHrmUrl = Environment.GetEnvironmentVariable("ORANGEHRM_URL");
-            if (string.IsNullOrEmpty(orangeHrmUrl))
-                throw new InvalidOperationException("Environment variable 'ORANGEHRM_URL' is not set.");
-
-            await Page.GotoAsync(orangeHrmUrl);
+            await Page.GotoAsync(ConfigManager.Settings.Framework.ORANGEHRM_URL);
         }
 
         public async Task PerformLoginAsync(bool navigate = true)
@@ -30,14 +26,8 @@ namespace Playwright.Core.Pages
             if (navigate)
                 await GoToLoginPageAsync();
 
-            var username = Environment.GetEnvironmentVariable("ORANGEHRM_USER");
-            var password = Environment.GetEnvironmentVariable("ORANGEHRM_PASSWORD");
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                throw new InvalidOperationException("Environment variables ORANGEHRM_USER and ORANGEHRM_PASSWORD must be set.");
-
-            await UsernameInput.FillAsync(username);
-            await PasswordInput.FillAsync(password);
+            await UsernameInput.FillAsync(ConfigManager.Settings.Framework.ORANGEHRM_ADMIN_USER);
+            await PasswordInput.FillAsync(ConfigManager.Settings.Framework.ORANGEHRM_ADMIN_PASSWORD);
 
             await LoginButton.ClickAsync(new LocatorClickOptions { Timeout = 15000 });
 

@@ -1,95 +1,96 @@
 using Microsoft.Playwright;
-using Playwright.Core.Utilities;
+using NUnit.Framework;
+using Playwright.Core.Config;
+using Playwright.Core.Models;
 
-namespace Playwright.Core.Drivers
+namespace Playwright.Core.Driver
 {
-    public static class PlaywrightDriver
+    /// <summary>
+    /// Creates and manages a dedicated browser, context, and page per test.
+    /// </summary>
+    public class PlaywrightDriver : IAsyncDisposable
     {
-        public static async Task<BrowserSession> InitializePlaywrightAsync()
-        {
-            var cfg = ConfigManager.Config;
+        private IPlaywright _playwright = null!;
+        private IBrowser _browser = null!;
+        private IBrowserContext _context = null!;
+        private IPage _page = null!;
+        private readonly TestSettings _settings;
 
-            var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            var browserType = cfg.Browser.ToLower() switch
+        public IBrowser Browser => _browser;
+        public IBrowserContext Context => _context;
+        public IPage Page => _page;
+        public string ArtifactsDir => Path.Combine(TestContext.CurrentContext.WorkDirectory, "artifacts");
+
+        public PlaywrightDriver()
+        {
+            // Ensure config is loaded once per test driver
+            ConfigManager.Initialize();
+            _settings = ConfigManager.Settings;
+        }
+
+        public async Task InitializeAsync()
+        {
+            await PlaywrightManager.EnsureInitializedAsync();
+            _playwright = PlaywrightManager.Playwright;
+
+            var pw = _settings.Playwright;
+            var browserName = pw.Browser.ToLower();
+
+            _browser = browserName switch
             {
-                "firefox" => playwright.Firefox,
-                "webkit" => playwright.Webkit,
-                _ => playwright.Chromium
+                "firefox" => await _playwright.Firefox.LaunchAsync(new() { Headless = pw.Headless }),
+                "webkit" => await _playwright.Webkit.LaunchAsync(new() { Headless = pw.Headless }),
+                _ => await _playwright.Chromium.LaunchAsync(new() { Headless = pw.Headless })
             };
 
-            var browser = await browserType.LaunchAsync(new BrowserTypeLaunchOptions
+            var options = new BrowserNewContextOptions
             {
-                Headless = cfg.Headless
-            });
+                ViewportSize = new ViewportSize { Width = pw.Viewport.Width, Height = pw.Viewport.Height },
+                DeviceScaleFactor = (float?)pw.Viewport.DeviceScaleFactor
+            };
 
-            var context = await browser.NewContextAsync(new BrowserNewContextOptions
+            _context = await _browser.NewContextAsync(options);
+
+            if (pw.RecordTrace)
             {
-                ViewportSize = new ViewportSize
-                {
-                    Width = cfg.BrowserWidth,
-                    Height = cfg.BrowserHeight
-                },
-            });
-
-            var page = await context.NewPageAsync();
-
-
-            page.SetDefaultTimeout(cfg.Timeout);
-            page.SetDefaultNavigationTimeout(cfg.NavigationTimeout);
-
-            //wait-for selectors, assertions, etc., globally:
-            context.SetDefaultTimeout(cfg.Timeout);
-
-            return new BrowserSession(playwright, browser, context, page);
-        }
-
-
-        public class BrowserSession
-        {
-            public IPlaywright Playwright { get; }
-            public IBrowser Browser { get; }
-            public IBrowserContext Context { get; }
-            public IPage Page { get; }
-
-            public BrowserSession(IPlaywright playwright, IBrowser browser, IBrowserContext context, IPage page)
-            {
-                Playwright = playwright;
-                Browser = browser;
-                Context = context;
-                Page = page;
+                var traceDir = Path.Combine(ArtifactsDir, "Traces");
+                Directory.CreateDirectory(traceDir);
+                await _context.Tracing.StartAsync(new() { Screenshots = true, Snapshots = true, Sources = true });
             }
 
-            public async Task CloseAsync()
-            {
-                //Console.WriteLine($"Playwright Hash: {playwright.GetHashCode()}");
-                //Console.WriteLine($"Browser Hash:    {browser.GetHashCode()}");
-                try
-                {
-                    if (Browser != null && Browser.IsConnected)
-                        await Browser.CloseAsync();
-                }
-                finally
-                {
-                    Playwright?.Dispose();
-                }
-            }
+            _page = await _context.NewPageAsync();
+            _context.SetDefaultTimeout(pw.DefaultTimeout);
+            _context.SetDefaultNavigationTimeout(pw.NavigationTimeout);
 
+            TestContext.Progress.WriteLine($"Browser launched: {browserName}, headless={pw.Headless}");
         }
 
-        public static async Task CloseAsync(IPlaywright playwright, IBrowser browser)
+        public async ValueTask DisposeAsync()
         {
-            //Console.WriteLine($"Playwright Hash: {playwright.GetHashCode()}");
-            //Console.WriteLine($"Browser Hash:    {browser.GetHashCode()}");
             try
             {
-                if (browser != null && browser.IsConnected)
-                    await browser.CloseAsync();
+                if (_settings?.Playwright.RecordTrace == true && _context != null)
+                {
+                    var traceDir = Path.Combine(ArtifactsDir, "Traces");
+                    Directory.CreateDirectory(traceDir);
+
+                    var traceFile = Path.Combine(traceDir,
+                        $"{TestContext.CurrentContext.Test.Name}_{DateTime.Now:HHmmss}.zip");
+
+                    await _context.Tracing.StopAsync(new() { Path = traceFile });
+                    TestContext.Progress.WriteLine($"Trace saved: {traceFile}");
+                }
+
+                if (_context != null)
+                    await _context.CloseAsync();
+
+                if (_browser != null)
+                    await _browser.CloseAsync();
             }
-            finally
+            catch (Exception ex)
             {
-                playwright?.Dispose();
+                TestContext.Progress.WriteLine($"Cleanup error: {ex.Message}");
             }
         }
     }
 }
-
