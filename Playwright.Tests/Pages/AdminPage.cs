@@ -1,8 +1,8 @@
 ﻿using Microsoft.Playwright;
-using Playwright.Test.Pages;
+using Playwright.Tests.Pages;
 using System.Text.RegularExpressions;
 
-namespace Playwright.Core.Pages
+namespace Playwright.Tests.Pages
 {
     public class AdminPage : PageBase
     {

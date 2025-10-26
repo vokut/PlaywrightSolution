@@ -1,0 +1,6 @@
+{
+  "trace": { "traceSuccessfulSteps": true },
+  "generator": {
+    "allowDebugGeneratedFiles": true
+  }
+}

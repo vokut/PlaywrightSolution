@@ -1,8 +1,8 @@
 ﻿using Microsoft.Playwright;
 using Playwright.Core.Config;
-using Playwright.Test.Pages;
+using Playwright.Tests.Pages;
 
-namespace Playwright.Core.Pages
+namespace Playwright.Tests.Pages
 {
     public class LoginPage : PageBase
     {

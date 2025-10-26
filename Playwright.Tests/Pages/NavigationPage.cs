@@ -1,7 +1,7 @@
 ﻿using Microsoft.Playwright;
-using Playwright.Test.Pages;
+using Playwright.Tests.Pages;
 
-namespace Playwright.Core.Pages
+namespace Playwright.Tests.Pages
 {
     public enum MenuItems
     {

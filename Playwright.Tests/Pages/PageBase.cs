@@ -1,12 +1,13 @@
 ﻿using Microsoft.Playwright;
 
-namespace Playwright.Test.Pages
+namespace Playwright.Tests.Pages
 {
     public enum PopupMessages
     {
         NoRecordsFound,
         SuccessfullyDeleted,
-        SuccessfullySaved
+        SuccessfullySaved,
+        SuccessfullyUpdated
     }
 
     public class PageBase
@@ -56,6 +57,7 @@ namespace Playwright.Test.Pages
                 PopupMessages.NoRecordsFound => "No Records Found",
                 PopupMessages.SuccessfullyDeleted => "Successfully Deleted",
                 PopupMessages.SuccessfullySaved => "Successfully Saved",
+                PopupMessages.SuccessfullyUpdated => "Successfully Updated",
                 _ => throw new ArgumentOutOfRangeException(nameof(popupMessage), popupMessage, null)
             };
 

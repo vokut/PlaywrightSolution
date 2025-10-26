@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
   <RunConfiguration>
+    <!-- Use up to 8 test workers -->
     <MaxCpuCount>8</MaxCpuCount>
   </RunConfiguration>
+
+  <!-- Allure report output directory -->
   <Allure>
     <Directory>allure-results</Directory>
   </Allure>
+
+  <!-- Reqnroll configuration -->
+  <Reqnroll>
+    <!-- Exclude all features or scenarios tagged with @helper -->
+    <FilterTags>~@helper</FilterTags>
+  </Reqnroll>
 </RunSettings>

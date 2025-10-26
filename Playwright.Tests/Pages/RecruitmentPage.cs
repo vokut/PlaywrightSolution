@@ -1,8 +1,8 @@
 ﻿using Microsoft.Playwright;
-using Playwright.Core.Models;
-using Playwright.Test.Pages;
+using Playwright.Tests.Models;
+using Playwright.Tests.Pages;
 
-namespace Playwright.Core.Pages
+namespace Playwright.Tests.Pages
 {
     public class RecruitmentPage : PageBase
     {

@@ -1,6 +1,6 @@
 ﻿using Bogus;
 
-namespace Playwright.Core.Models
+namespace Playwright.Tests.Models
 {
     public class Employee
     {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Playwright;
-using Playwright.Core.Pages;
+using Playwright.Tests.Pages;
 
 namespace Playwright.Tests.Base
 {
