@@ -1,7 +1,7 @@
 ﻿using Allure.NUnit;
 using Allure.NUnit.Attributes;
-using Playwright.Tests.Pages;
 using Playwright.Tests.Base;
+using Playwright.Tests.Pages;
 
 namespace Playwright.Tests
 {

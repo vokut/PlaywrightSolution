@@ -1,8 +1,6 @@
-﻿using Reqnroll;
+﻿using Playwright.Tests.Base;
 using Playwright.Tests.Pages; // for MenuItems enum
-using System;
-using System.Threading.Tasks;
-using Playwright.Tests.Base;
+using Reqnroll;
 
 namespace Playwright.Reqnroll.Steps
 {

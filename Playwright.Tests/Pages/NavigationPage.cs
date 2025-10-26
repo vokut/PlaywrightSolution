@@ -1,5 +1,4 @@
 ﻿using Microsoft.Playwright;
-using Playwright.Tests.Pages;
 
 namespace Playwright.Tests.Pages
 {

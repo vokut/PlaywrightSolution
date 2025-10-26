@@ -1,8 +1,6 @@
-﻿using Reqnroll;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using Playwright.Tests.Base;
+﻿using Playwright.Tests.Base;
 using Playwright.Tests.Pages;
+using Reqnroll;
 
 namespace Playwright.Reqnroll.Steps
 {

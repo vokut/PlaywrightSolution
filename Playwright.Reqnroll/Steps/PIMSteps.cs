@@ -1,13 +1,14 @@
-﻿using Reqnroll;
-using Playwright.Tests.Models;
-using System;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using Allure.NUnit;
+using Allure.NUnit.Attributes;
 using Playwright.Tests.Base;
-using Playwright.Tests.Pages;
+using Playwright.Tests.Models;
+using Reqnroll;
 
 namespace Playwright.Reqnroll.Steps
 {
+    [AllureNUnit]
+    [AllureFeature("PIM")]
+    [AllureSuite("PIM Management")]
     [Binding]
     public class PIMSteps
     {

@@ -1,7 +1,6 @@
-﻿using Reqnroll;
-using Playwright.Core.Driver;
-using System.Threading.Tasks;
+﻿using Playwright.Core.Driver;
 using Playwright.Tests.Base;
+using Reqnroll;
 
 namespace Playwright.Reqnroll.Hooks
 {

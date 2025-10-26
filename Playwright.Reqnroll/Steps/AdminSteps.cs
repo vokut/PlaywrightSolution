@@ -1,12 +1,14 @@
-﻿using Reqnroll;
-using System;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using Allure.NUnit;
+using Allure.NUnit.Attributes;
 using Playwright.Tests.Base;
 using Playwright.Tests.Pages;
+using Reqnroll;
 
 namespace Playwright.Reqnroll.Steps
 {
+    [AllureNUnit]
+    [AllureFeature("Admin")]
+    [AllureSuite("Admin Management")]
     [Binding]
     public class AdminSteps
     {

@@ -1,7 +1,6 @@
 using Microsoft.Playwright;
 using NUnit.Framework;
 using Playwright.Core.Config;
-using Playwright.Core.Models;
 
 namespace Playwright.Core.Driver
 {

@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Allure.Net.Commons" Version="2.14.1" />
+    <PackageReference Include="Allure.NUnit" Version="2.14.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="NUnit" Version="4.4.0" />
@@ -29,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="allureConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="reqnroll.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
