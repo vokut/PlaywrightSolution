@@ -29,7 +29,7 @@ namespace Playwright.Tests.Pages
         //Method
         public async Task ClickMenuItemAsync(MenuItems item)
         {
-            await MenuItem(item).ClickAsync(new LocatorClickOptions { Timeout = 10000 });
+            await MenuItem(item).ClickAsync();
         }
 
         public async Task Wait()

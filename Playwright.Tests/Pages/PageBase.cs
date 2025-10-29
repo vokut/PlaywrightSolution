@@ -129,7 +129,7 @@ namespace Playwright.Tests.Pages
         public async Task ButtonClickAsync(string buttonName)
         {
             var button = Page.GetByRole(AriaRole.Button, new() { Name = buttonName });
-            await button.ClickAsync(new LocatorClickOptions { Timeout = 15000 });
+            await button.ClickAsync();
         }
 
         public async Task ConfirmationButtonClickAsync(string buttonName)

@@ -24,11 +24,10 @@ namespace Playwright.Tests.Pages
         {
             if (navigate)
                 await GoToLoginPageAsync();
-
             await UsernameInput.FillAsync(ConfigManager.Settings.Framework.ORANGEHRM_ADMIN_USER);
             await PasswordInput.FillAsync(ConfigManager.Settings.Framework.ORANGEHRM_ADMIN_PASSWORD);
 
-            await LoginButton.ClickAsync(new LocatorClickOptions { Timeout = 15000 });
+            await LoginButton.ClickAsync();
 
             var banner = Page.Locator(".oxd-brand-banner");
             await Assertions.Expect(banner).ToBeVisibleAsync(new() { Timeout = 15000 });
