@@ -12,13 +12,13 @@ namespace Playwright.Core.Config
         public static TestSettings Settings { get; private set; } = new();
         public static string EnvironmentName { get; private set; } = "dev";
 
-        public static void Initialize()
+        public static TestSettings Initialize()
         {
             AllureLifecycle.Instance.CleanupResultDirectory();
 
             var dir = new DirectoryInfo(AppContext.BaseDirectory);
 
-            while (dir != null && !File.Exists(Path.Combine(dir.FullName, ".env")) && !dir.GetFiles("*.sln").Any())
+            while (dir != null && !File.Exists(Path.Combine(dir.FullName, ".env")) && dir.GetFiles("*.sln").Length == 0)
             {
                 dir = dir.Parent;
             }
@@ -33,11 +33,7 @@ namespace Playwright.Core.Config
             if (File.Exists(envPath))
             {
                 DotEnv.Load(new DotEnvOptions(envFilePaths: [envPath], overwriteExistingVars: false));
-
             }
-            //var envFile = Path.Combine(TestContext.CurrentContext.TestDirectory, ".env");
-            //if (File.Exists(envFile))
-            //    Env.Load(envFile);
 
             EnvironmentName = Environment.GetEnvironmentVariable("TEST_ENVIRONMENT") ?? "dev";
 
@@ -51,7 +47,9 @@ namespace Playwright.Core.Config
 
             Settings = new TestSettings();
             _config.Bind(Settings);
-            TestContext.WriteLine($"Loaded config for {EnvironmentName}");
+            TestContext.Progress.WriteLine($"Loaded config for {EnvironmentName}");
+
+            return Settings;
         }
     }
 }

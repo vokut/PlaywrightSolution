@@ -15,17 +15,22 @@
     {
         public string Browser { get; set; } = "chromium";
         public bool Headless { get; set; } = true;
-        public bool RecordTrace { get; set; } = true;
-        public bool RecordVideo { get; set; } = false;
         public ViewportSettings Viewport { get; set; } = new();
         public int DefaultTimeout { get; set; } = 15000;
         public int NavigationTimeout { get; set; } = 30000;
 
+        public Dictionary<string, DeviceConfig>? Devices { get; set; }
     }
     public class ViewportSettings
     {
         public int Width { get; set; } = 1600;
         public int Height { get; set; } = 900;
         public double DeviceScaleFactor { get; set; } = 1.0;
+    }
+
+    public class DeviceConfig
+    {
+        public string Device { get; set; } = "";
+        public string Browser { get; set; } = "chromium";
     }
 }

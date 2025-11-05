@@ -1,39 +1,24 @@
 ﻿using Microsoft.Playwright;
 using NUnit.Framework;
-using Playwright.Core.Config;
 
-namespace Playwright.Core.Driver
+namespace Playwright.Core.Drivers
 {
-    /// <summary>
-    /// Handles global Playwright initialization. 
-    /// Thread-safe, lightweight, and reused across all tests.
-    /// </summary>
     public static class PlaywrightManager
     {
-        private static readonly SemaphoreSlim _initLock = new(1, 1);
-        private static IPlaywright _playwright = null!;
-        private static bool _initialized;
+        private static readonly Lazy<Task<IPlaywright>> _lazyPlaywright = new(
+            InitializePlaywrightInternalAsync, LazyThreadSafetyMode.ExecutionAndPublication
+        );
 
-        public static IPlaywright Playwright => _playwright;
-
-        public static async Task EnsureInitializedAsync()
+        public static Task<IPlaywright> GetPlaywrightAsync()
         {
-            if (_initialized) return; // fast path
+            return _lazyPlaywright.Value;
+        }
 
-            await _initLock.WaitAsync();
-            try
-            {
-                if (_initialized) return; // double-check inside lock
-                ConfigManager.Initialize();
-                _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-                _initialized = true;
-
-                TestContext.Progress.WriteLine("Playwright initialized (thread-safe).");
-            }
-            finally
-            {
-                _initLock.Release();
-            }
+        private static async Task<IPlaywright> InitializePlaywrightInternalAsync()
+        {
+            var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+            TestContext.Progress.WriteLine("Playwright initialized (thread-safe).");
+            return playwright;
         }
     }
 }

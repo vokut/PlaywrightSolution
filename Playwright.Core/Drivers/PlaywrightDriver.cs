@@ -1,15 +1,16 @@
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
 using NUnit.Framework;
 using Playwright.Core.Config;
+using Playwright.Core.Models;
+using System.Diagnostics;
 
-namespace Playwright.Core.Driver
+namespace Playwright.Core.Drivers
 {
-    /// <summary>
-    /// Creates and manages a dedicated browser, context, and page per test.
-    /// </summary>
-    public class PlaywrightDriver : IAsyncDisposable
+    public class PlaywrightDriver
     {
-        private IPlaywright _playwright = null!;
+        private readonly IPlaywright _playwright;
+        private readonly TestSettings _settings;
+
         private IBrowser _browser = null!;
         private IBrowserContext _context = null!;
         private IPage _page = null!;
@@ -18,20 +19,54 @@ namespace Playwright.Core.Driver
         public IBrowserContext Context => _context;
         public IPage Page => _page;
 
+        public PlaywrightDriver(IPlaywright playwright, TestSettings settings)
+        {
+            _playwright = playwright;
+            _settings = settings;
+        }
+
         public async Task InitializeAsync()
         {
-            await PlaywrightManager.EnsureInitializedAsync();
-            _playwright = PlaywrightManager.Playwright;
-
-            var pw = ConfigManager.Settings.Playwright;
+            var pw = _settings.Playwright;
             var browserName = pw.Browser.ToLower();
 
-            _browser = browserName switch
+            var chromiumArgs = new List<string>
             {
-                "firefox" => await _playwright.Firefox.LaunchAsync(new() { Headless = pw.Headless }),
-                "webkit" => await _playwright.Webkit.LaunchAsync(new() { Headless = pw.Headless }),
-                _ => await _playwright.Chromium.LaunchAsync(new() { Headless = pw.Headless })
+                "--disable-renderer-backgrounding",
+                "--disable-background-timer-throttling",
+                "--disable-backgrounding-occluded-windows",
+                "--disable-features=PaintHolding",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--mute-audio"
             };
+
+            if (pw.Headless)
+            {
+                chromiumArgs.Add("--use-gl=angle");
+                //chromiumArgs.Add("--enable-webgl");
+                //chromiumArgs.Add("--ignore-gpu-blocklist");
+                //chromiumArgs.Add("--disable-animations");
+            }
+
+            var chromiumLaunchOptions = new BrowserTypeLaunchOptions
+            {
+                Headless = pw.Headless,
+                Args = chromiumArgs.ToArray()
+            };
+
+            var defaultLaunchOptions = new BrowserTypeLaunchOptions { Headless = pw.Headless };
+
+            var devicePreset = Environment.GetEnvironmentVariable("DEVICE_PRESET");
+
+            DeviceConfig? selectedDevice = null;
+
+            if (!string.IsNullOrEmpty(devicePreset) &&
+                pw.Devices != null &&
+                pw.Devices.TryGetValue(devicePreset, out var devCfg))
+            {
+                selectedDevice = devCfg;
+            }
 
             var options = new BrowserNewContextOptions
             {
@@ -39,24 +74,47 @@ namespace Playwright.Core.Driver
                 DeviceScaleFactor = (float?)pw.Viewport.DeviceScaleFactor
             };
 
+            if (selectedDevice != null && _playwright.Devices.TryGetValue(selectedDevice.Device, out var device))
+            {
+                _browser = selectedDevice.Browser switch
+                {
+                    "firefox" => await _playwright.Firefox.LaunchAsync(defaultLaunchOptions),
+                    "webkit" => await _playwright.Webkit.LaunchAsync(defaultLaunchOptions),
+                    _ => await _playwright.Chromium.LaunchAsync(chromiumLaunchOptions)
+                };
+
+                options.ViewportSize = device.ViewportSize;
+                options.DeviceScaleFactor = device.DeviceScaleFactor;
+                options.IsMobile = device.IsMobile;
+                options.UserAgent = device.UserAgent;
+                options.HasTouch = device.HasTouch;
+
+                TestContext.Progress.WriteLine($"Mobile emulation enabled: {selectedDevice.Device}, headless={pw.Headless}");
+            }
+            else
+            {
+                _browser = browserName switch
+                {
+                    "firefox" => await _playwright.Firefox.LaunchAsync(defaultLaunchOptions),
+                    "webkit" => await _playwright.Webkit.LaunchAsync(defaultLaunchOptions),
+                    _ => await _playwright.Chromium.LaunchAsync(chromiumLaunchOptions)
+                };
+
+                TestContext.Progress.WriteLine($"Desktop browser launched: {browserName}, headless={pw.Headless}");
+            }
+
             _context = await _browser.NewContextAsync(options);
 
             _page = await _context.NewPageAsync();
             _context.SetDefaultTimeout(pw.DefaultTimeout);
             _context.SetDefaultNavigationTimeout(pw.NavigationTimeout);
 
-            TestContext.Progress.WriteLine($"Browser launched: {browserName}, headless={pw.Headless}");
         }
 
-        public async ValueTask DisposeAsync()
+        public async Task DisposeAsync()
         {
             try
             {
-                if (ConfigManager.Settings?.Playwright.RecordTrace == true && _context != null)
-                {
-                    //TO DO
-                }
-
                 if (_context != null)
                     await _context.CloseAsync();
 

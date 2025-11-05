@@ -1,4 +1,7 @@
-﻿using Playwright.Core.Driver;
+﻿using Microsoft.Playwright;
+using Playwright.Core.Config;
+using Playwright.Core.Drivers;
+using Playwright.Core.Models;
 using Playwright.Tests.Base;
 using Reqnroll;
 
@@ -11,15 +14,25 @@ namespace Playwright.Reqnroll.Hooks
         private PlaywrightDriver _driver = null!;
         private PageManager _pageManager = null!;
 
+        private static TestSettings _baseSettings = null!;
+        private static IPlaywright _basePlaywright = null!;
+
         public PlaywrightHooks(ScenarioContext scenarioContext)
         {
             _scenarioContext = scenarioContext;
         }
 
+        [BeforeTestRun]
+        public static async Task BeforeTestRun()
+        {
+            _baseSettings = ConfigManager.Initialize();
+            _basePlaywright = await PlaywrightManager.GetPlaywrightAsync();
+        }
+
         [BeforeScenario]
         public async Task BeforeScenario()
         {
-            _driver = new PlaywrightDriver();
+            _driver = new PlaywrightDriver(_basePlaywright, _baseSettings);
             await _driver.InitializeAsync();
 
             _pageManager = new PageManager(_driver.Page);
